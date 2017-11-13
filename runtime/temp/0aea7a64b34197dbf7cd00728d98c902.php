@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:82:"/Applications/MAMP/htdocs/FenXiao/public/../application/admin/view/Main/index.html";i:1510371828;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:82:"/Applications/MAMP/htdocs/fenxiao/public/../application/admin/view/Main/index.html";i:1510371828;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

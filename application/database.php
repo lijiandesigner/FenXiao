@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => 'bdm244974309.my3w.com',
     // 数据库名
-    'database'        => 'FenXiaoShop',
+    'database'        => 'bdm244974309_db',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'bdm244974309',
     // 密码
-    'password'        => 'root',
+    'password'        => 'hsl1044919317',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
