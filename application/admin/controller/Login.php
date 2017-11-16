@@ -18,7 +18,7 @@ class Login extends Controller
     		if(UserModel::where('openid','=',$pwd)->column('openid')){
     			Session::set('name','thinkphp','think');
 
-    			$this->redirect('/hsn2/public/admin/index');
+    			$this->redirect('/FenXiao/public/admin/index');
     		}
     		else{
     			$this->error('用户名或密码错误！');
