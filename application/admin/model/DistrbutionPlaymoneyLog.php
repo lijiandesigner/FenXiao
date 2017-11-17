@@ -1,8 +1,10 @@
 <?php
 namespace app\admin\model;
 use think\Model;
-class TablezhuoziModel extends Model{
-	protected $table='table_zhuozi';
+class DistrbutionPlaymoneyLog extends Model{
+    //分销费用打款记录
+	protected $table='distrbution_playmoney_log';
+
 }
 /*
 外键表中 car belongsTo('主键表模型','外键表外键列名','主键表主键列名')
