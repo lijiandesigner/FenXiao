@@ -6,7 +6,7 @@ class Vipmess extends Controller
 {
 	public function index(){
 		$arr=Array();
-		$re=Db::name("vip_user")->select();
+		$re=Db::name("user")->select();
 		if($re){
 			$arr['data']=$re;
 		}else{

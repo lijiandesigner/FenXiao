@@ -172,6 +172,9 @@ CREATE TABLE `user` (
   `user_time` int(11) DEFAULT NULL COMMENT '注册时间',
   `user_end_time` text COMMENT '最后登陆时间',
   `user_level` int(11) DEFAULT NULL COMMENT '级别',
+  `PID` int DEFAULT 0 COMMENT '上级编号0代表当前为一级会员',
+  `Score` int DEFAULT 0 COMMENT '会员积分',
+  `Level` int DEFAULT 0 COMMENT '0为游客1为经销商',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
@@ -179,8 +182,11 @@ CREATE TABLE `user` (
 -- Records of user
 -- ----------------------------
 
-INSERT INTO `user` VALUES ('1', 'admin', 'admin', null, null, null, null, null, null, null);
-
+INSERT INTO `user` VALUES ('1', 'admin', 'admin', null, null, null, null, null, null, null,0,0,1);
+INSERT INTO `user` VALUES ('2', 'admin', 'admin', null, null, null, null, null, null, null,1,0,1);
+INSERT INTO `user` VALUES ('3', 'admin', 'admin', null, null, null, null, null, null, null,2,0,1);
+INSERT INTO `user` VALUES ('4', 'admin', 'admin', null, null, null, null, null, null, null,3,0,1);
+INSERT INTO `user` VALUES ('5', 'admin', 'admin', null, null, null, null, null, null, null,2,0,1);
 -- ----------------------------
 -- Table structure for vip_withdrawals_apply
 -- ----------------------------

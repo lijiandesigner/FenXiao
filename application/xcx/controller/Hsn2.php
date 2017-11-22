@@ -7,6 +7,9 @@ use app\xcx\model\DingdanModel;
 use app\xcx\model\LunboModel;
 use app\xcx\model\ConfigModel;
 use app\xcx\model\TablezhuoziModel;
+use app\xcx\model\UserModel;
+use app\xcx\model\VipDistributorModel;
+use think\Db;
 class Hsn2 extends Controller
 {	
 
@@ -76,7 +79,7 @@ class Hsn2 extends Controller
     //单个商品数据
     public function wx_space_show(){
     	$space_id=$_POST['space_id'];
-       
+        
         $Car = new FoodModel();
         $Car=$Car->where('id',$space_id)->find();
 
@@ -123,6 +126,11 @@ class Hsn2 extends Controller
 
     //订单添加数据库
     public function add_order(){
+        //查询各级返佣比例
+        $re=Db::name("platform_config")->select();
+           //dump($re[0]['FPrecent']);
+        
+        
 
         //桌子号
         $table_num=input("coupon_money");
@@ -141,6 +149,7 @@ class Hsn2 extends Controller
         $moneys_arr=input("moneys_arr");
         //总价
         $money=input("money")*1000;
+
         $phone=input("phone");
         //状态
         $buff="未完成";
@@ -183,6 +192,54 @@ class Hsn2 extends Controller
                 'dingdan_time_s'  =>  $time_s,
                 'dingdan_time_e' =>  $time_e
             ]);
+             $id=UserModel::where(['openid'=>$openid,'Level'=>1])->value('id');//根据openid查出用户id
+             dump($id."  ".$openid."    ");
+             if($id==''){
+                //当前用户为游客
+                dump('11');
+               // return 11;
+             }else{
+               
+                //订单已完成,存入会员返佣信息表
+                $father=$money*4/100;
+                $GradFather=$money*3/100;
+                $GreatGrandFather=$money*2/100;
+                $re1=Db::name("vip_back_commission_message")->insert(['OrderId'=>$id,'Father'=>$father,'GradFather'=>$GradFather,'GreatGrandFather'=>$GreatGrandFather]);
+                //查询该用户的上级
+                $fuid=UserModel::where(['id'=>$id])->value('PID');
+              //  return 11;
+                $dum='';
+                    //把对上级的返利存入会员经销商
+                    for($a=0;$a<3;$a++){
+                        if($fuid==0){
+                            
+                            break;
+                        }else{
+                            if($a==0){
+                                $dum=$father;
+                            }else if($a==1){
+                                $dum=$GradFather;
+                            }else{
+                                $dum=$GreatGrandFather;
+                            }
+                            $ar1=Db::name("user")->where(['id'=>$fuid])->select();
+                            $ifexist=Db::name('vip_distributor')->where(['id'=>$fuid])->select();
+                            if($ifexist){
+                                $re3=Db::name('vip_distributor')->where(['id'=>$fuid])->setInc('FxMoney',$dum);
+                            }else{
+                                 $re3=Db::name('vip_distributor')->insert(['id'=>$fuid,'FxMoney'=>$dum,'ImgSrc'=>'mo']);
+                            }
+                            $fuid=$ar1[0]['PID'];
+                        }
+                    }
+                    
+                    
+
+                
+                //订单已完成，存入会员经销商表
+                
+
+             }
         }
         else{
             $dingdan->data([
@@ -199,6 +256,12 @@ class Hsn2 extends Controller
                 'dingdan_time_e' =>  $time_e
             ]);
 
+            
+            
+           
+            
+            
+
             //更新包房状态
             if($table_num!=0){
                 db('table_zhuozi')->where('id',$table_num)->update([
@@ -210,6 +273,8 @@ class Hsn2 extends Controller
             }
         
         $dingdan->save();
+        //检查‘会员经销商’中是否存在指定用户
+        
     }
 
 

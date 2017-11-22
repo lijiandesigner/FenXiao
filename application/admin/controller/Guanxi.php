@@ -8,16 +8,16 @@ class Guanxi extends Controller
 	
 	public function index(){
 		$arr=Array();
-		$arr['ce']="ss";
+		//$arr['ce']="ss";
 		if(input()){
 			$arr['method']=1;
 			
-			$ar=Db::name('vip_user')->where(['ID'=>input('id')])->select();
+			$ar=Db::name('user')->where(['id'=>input('id')])->select();
 			//如果存在该用户
 			if($ar){
 				//返回他所有的上、下级
 				$PID=$ar[0]['PID'];
-				$ID=$ar[0]['ID'];
+				$ID=$ar[0]['id'];
 				$PID==0?$arr['jibie']=1:$arr['jibie']=0;
 
 				for($a=0;$a<3;$a++){
@@ -37,9 +37,9 @@ class Guanxi extends Controller
 				//返回他所有的下级
 				for($a=0;$a<3;$a++){
 				
-						$ar1=Db::name("vip_user")->where(['PID'=>$ID])->select();
+						$ar1=Db::name("user")->where(['PID'=>$ID])->select();
 						if($ar1){
-							$ID=$ar1[0]['ID'];
+							$ID=$ar1[0]['id'];
 							$arr['xia'.$a]=$ar1;
 						}else{
 							$arr['xia']=0;
