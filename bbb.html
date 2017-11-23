@@ -1,10 +1,92 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-xxxx
-</body>
-</html>
+//会员基本信息表
+create table vip_essential_information(
+ID int primary key,
+OpenID varchar(50),
+Phone varchar(20),
+PID int default 0,
+Score int default 0,
+Level int default 0
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+//会员经销商表
+create table vip_distributor(
+Id int primary key,
+FxMoney double,
+ImgSrc Varchar(200)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+//会员提现申请表
+create table vip_withdrawals_apply(
+ID int primary key,
+Uid int,
+MoneyNum money,
+WithDrawTime datetime,
+HandleTime datetime,
+Handler varchar(50),
+State int,
+Description text
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+//申请状态表
+
+create table apply_state(
+Id int primary key,
+Name varchar(50)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+//分销费用打款记录
+
+create table distrbution_playmoney_log(
+ID int primary key,
+WID int,
+Handler varchar(50),
+HandlerTime datetime,
+Description text
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+//会员返佣信息
+
+create table vip_back_commission_message(
+ID int unique,
+OrderId int,
+Father double,
+GradFather double,
+CreatGrandFather double
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+//平台配置信息
+create table platform_config(
+Id int primary key,
+FPrecent double,
+GFPrecent double,
+GGPrecent double,
+MinRequire double
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+//收货信息表
+
+create table goods_receipt(
+ID int primary key,
+Name varchar(50),
+Phone varchar(20),
+ProvincesId int,
+CityId int,
+DistrictId int,
+Detial int,
+IsDefault int
+)ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+
+//地址字典表
+
+
+create table addr_dictionary(
+ID int primary key unique,
+Name varchar(200),
+Fid int,
+
+)
