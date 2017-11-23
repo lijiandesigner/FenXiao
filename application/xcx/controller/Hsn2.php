@@ -128,9 +128,11 @@ class Hsn2 extends Controller
     public function add_order(){
         //查询各级返佣比例
         $re=Db::name("platform_config")->select();
-           //dump($re[0]['FPrecent']);
-        
-        
+           dump($re);
+        $fp=$re[0]['FPrecent'];
+        $gfp=$re[0]['GFPrecent'];
+        $ggfp=$re[0]['GGPrecent'];
+        $min=$re[0]['MinRequire'];
 
         //桌子号
         $table_num=input("coupon_money");
@@ -175,7 +177,7 @@ class Hsn2 extends Controller
         //没结束订单号不变，
         //结束订单号改变
         $buff2=DingdanModel::where('dingdan_phone',$phone)->value('dingdan_buff');
-        if($buff2=='未完成'){
+        if(!$buff2=='未完成'){
             //没有完成的订单号
             $order=DingdanModel::where('dingdan_phone',$phone)->value('dingdan_num');
             $table_num=DingdanModel::where('dingdan_phone',$phone)->value('dingdan_table');
@@ -192,56 +194,8 @@ class Hsn2 extends Controller
                 'dingdan_time_s'  =>  $time_s,
                 'dingdan_time_e' =>  $time_e
             ]);
-             $id=UserModel::where(['openid'=>$openid,'Level'=>1])->value('id');//根据openid查出用户id
-             dump($id."  ".$openid."    ");
-             if($id==''){
-                //当前用户为游客
-                dump('11');
-               // return 11;
-             }else{
-               
-                //订单已完成,存入会员返佣信息表
-                $father=$money*4/100;
-                $GradFather=$money*3/100;
-                $GreatGrandFather=$money*2/100;
-                $re1=Db::name("vip_back_commission_message")->insert(['OrderId'=>$id,'Father'=>$father,'GradFather'=>$GradFather,'GreatGrandFather'=>$GreatGrandFather]);
-                //查询该用户的上级
-                $fuid=UserModel::where(['id'=>$id])->value('PID');
-              //  return 11;
-                $dum='';
-                    //把对上级的返利存入会员经销商
-                    for($a=0;$a<3;$a++){
-                        if($fuid==0){
-                            
-                            break;
-                        }else{
-                            if($a==0){
-                                $dum=$father;
-                            }else if($a==1){
-                                $dum=$GradFather;
-                            }else{
-                                $dum=$GreatGrandFather;
-                            }
-                            $ar1=Db::name("user")->where(['id'=>$fuid])->select();
-                            $ifexist=Db::name('vip_distributor')->where(['id'=>$fuid])->select();
-                            if($ifexist){
-                                $re3=Db::name('vip_distributor')->where(['id'=>$fuid])->setInc('FxMoney',$dum);
-                            }else{
-                                 $re3=Db::name('vip_distributor')->insert(['id'=>$fuid,'FxMoney'=>$dum,'ImgSrc'=>'mo']);
-                            }
-                            $fuid=$ar1[0]['PID'];
-                        }
-                    }
-                    
-                    
-
-                
-                //订单已完成，存入会员经销商表
-                
-
-             }
-        }
-        else{
+            
+        }else{
             $dingdan->data([
                 'dingdan_openid'  =>  $openid,
                 'dingdan_phone'  =>  $phone,
@@ -255,27 +209,72 @@ class Hsn2 extends Controller
                 'dingdan_time_s'  =>  $time_s,
                 'dingdan_time_e' =>  $time_e
             ]);
-
+             //如果订单金额大于规定值更改用户的级别为经销商
+             dump($min);
+             
+             $id=UserModel::where(['openid'=>$openid])->value('id');//根据openid查出用户id
+                 dump($id."  ".$openid."    ");
+                 if($id==''){
+                    //当前用户不存在
+                    dump('11');
+                   // return 11;
+                 }else{
+                     if($money>$min*1000){
+                        // echo 'ddddddddddddddd'.$id."   ";
+                         $r=Db::name('user')->where(['id'=>$id])->update(['Level'=>1]);
+                     }
+                    //订单已完成,存入会员返佣信息表
+                    $father=$money*$fp/100;
+                    $GradFather=$money*$gfp/100;
+                    $GreatGrandFather=$money*$ggfp/100;
+                    dump($father);
+                    $re1=Db::name("vip_back_commission_message")->insert(['OrderId'=>$id,'Father'=>$father,'GradFather'=>$GradFather,'GreatGrandFather'=>$GreatGrandFather]);
+                    //查询该用户的上级
+                    $fuid=UserModel::where(['id'=>$id])->value('PID');
+                    //订单成功,对应的增加积分
+                   // $aaa=Db::name('')    //暂且不搞
+                  //  return 11;
+                    $dum='';
+                        //把对上级的返利存入会员经销商
+                        for($a=0;$a<3;$a++){
+                            if($fuid==0){
+                                
+                                break;
+                            }else{
+                                if($a==0){
+                                    $dum=$father;
+                                }else if($a==1){
+                                    $dum=$GradFather;
+                                }else{
+                                    $dum=$GreatGrandFather;
+                                }
+                                $ar1=Db::name("user")->where(['id'=>$fuid])->select();
+                                $ifexist=Db::name('vip_distributor')->where(['id'=>$fuid])->select();
+                                if($ifexist){
+                                    $re3=Db::name('vip_distributor')->where(['id'=>$fuid])->setInc('FxMoney',$dum);
+                                }else{
+                                     $re3=Db::name('vip_distributor')->insert(['id'=>$fuid,'FxMoney'=>$dum,'ImgSrc'=>'mo']);
+                                }
+                                $fuid=$ar1[0]['PID'];
+                            }
+                        }
+                 }
             
-            
-           
-            
-            
-
             //更新包房状态
             if($table_num!=0){
                 db('table_zhuozi')->where('id',$table_num)->update([
                     'table_shiyong_ok' => 1
                     ]);
-                }
-            
-            
             }
+            
+            
+            
         
-        $dingdan->save();
+            $dingdan->save();
         //检查‘会员经销商’中是否存在指定用户
         
-    }
+        }
+}
 
 
 
