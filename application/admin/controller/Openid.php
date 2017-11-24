@@ -6,8 +6,8 @@ class openid extends Controller
 {	
 	 //获取openid
 	 public function openid(){
-	 	$appid="wxfe555420bcdfbc88";
-	 	$secret="9be456ab1d20ba2e5d76c5ebea5e676b";
+	 	$appid="wx0f7e1cbd3b8a65d4";
+	 	$secret="a43ceda010f2e01ec601a3ed0240637e";
 	 	$resCode=$_GET['code'];
 	 	$url="https://api.weixin.qq.com/sns/jscode2session?appid=$appid&secret=$secret&js_code=$resCode&grant_type=authorization_code";
 	 	$weixin=file_get_contents("https://api.weixin.qq.com/sns/jscode2session?appid=$appid&secret=$secret&js_code=$resCode&grant_type=authorization_code");
